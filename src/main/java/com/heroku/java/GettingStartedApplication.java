@@ -41,6 +41,7 @@ public class GettingStartedApplication {
             }
 
             model.put("records", output);
+            System.out.println("Sherry de Villiers");
             return "database";
 
         } catch (Throwable t) {
