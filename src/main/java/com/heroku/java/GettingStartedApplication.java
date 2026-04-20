@@ -5,6 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -50,6 +52,27 @@ public class GettingStartedApplication {
             return "error";
         }
     }
+
+    @GetMapping("/dbinput")
+    String getdbInputHtml() {
+        return "dbinput";
+    }
+
+    @PostMapping("/dbinput")
+    String dbInput(Map<String, Object> model, @RequestParam String messageInput) {
+        try (Connection connection = dataSource.getConnection()) {
+            final var statement = connection.createStatement();
+            System.out.println("testing");
+            System.out.println(messageInput);
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS table_timestamp_and_random_string (tick timestamp, random_string varchar(50))");
+            statement.executeUpdate("INSERT INTO table_timestamp_and_random_string VALUES (now(), '" + messageInput + "')");
+        } catch (Throwable t) {
+            model.put("message", t.getMessage());
+            return "error";
+        }
+        return "dbinput";
+    }
+
     public String getRandomString(){
         //code adapted from https://www.baeldung.com/java-random-string
         int leftLimit = 97; // letter 'a'
